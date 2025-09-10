@@ -1,0 +1,24 @@
+[package]
+name = "rust_addons"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+pdf-extract = "0.8.0"
+textract = "0.1.0"
+
+[dev-dependencies]
+rand = "0.9.0-beta.3"
+
+[profile.dev]
+opt-level = "z"
+lto = true
+
+[profile.release]
+strip = "symbols"
+panic = "abort"
+opt-level = "z"
+lto = true
+
+[lib]
+crate-type = ["staticlib"]  # or "cdylib" if you prefer a DLL

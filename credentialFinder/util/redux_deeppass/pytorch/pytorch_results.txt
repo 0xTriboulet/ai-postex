@@ -1,0 +1,37 @@
+---[+] Epoch 45 / 45---
+
+[i] Epoch 45 / 45, Counter: 0, Batch Loss:  0.0081, Batch Accuracy: 0.9834, Best Epoch Accuracy: 0.9834
+[i] Epoch 45 / 45, Counter: 1, Batch Loss:  0.0068, Batch Accuracy: 0.9878, Best Epoch Accuracy: 0.9878
+[i] Epoch 45 / 45, Counter: 2, Batch Loss:  0.0052, Batch Accuracy: 0.9902, Best Epoch Accuracy: 0.9902
+[i] Epoch 45 / 45, Counter: 105, Batch Loss:  0.0066, Batch Accuracy: 0.9912, Best Epoch Accuracy: 0.9912
+[i] Epoch 45 / 45, Counter: 814, Batch Loss:  0.0039, Batch Accuracy: 0.9927, Best Epoch Accuracy: 0.9927
+Validation accuracy: 0.9775625
+>>> [i] Epoch 45 / 45, Best Loss: inf, Epoch Accuracy: 0.9927, Best Accuracy: 0.9784 <<<
+
+
+Confusion matrix:
+[[397705   1869]
+ [ 15318 385108]]
+Accuracy score:
+0.97851625
+Precision score:
+0.9951702555965859
+F1 score:
+0.9781725495076854
+Recall score:
+0.9617457407860629
+
+[i] Saved model pytorch_model.pt
+C:\Python311\Lib\site-packages\torch\onnx\utils.py:728: UserWarning: Setting 'keep_initializers_as_inputs=False' for opset version8 or lower would lead to an invalid ONNX graph. Therefore, 'keep_initializers_as_inputs=False' is ignored during export.Exported model will have initializers as graph inputs (compliant  to ONNX IR v3).
+  warnings.warn(
+C:\Python311\Lib\site-packages\torch\onnx\symbolic_opset9.py:4279: UserWarning: Exporting a model to ONNX with a batch_size other than 1, with a variable length with LSTM can cause an error when running the ONNX model with a different batch size. Make sure to save the model with a batch size of 1, or define the initial states (h0/c0) as inputs of the model. 
+  warnings.warn(
+C:\Python311\Lib\site-packages\torch\onnx\utils.py:663: UserWarning: Constant folding - unsupported opset version. Constant folding not applied. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\jit\passes\onnx\constant_fold.cpp:346.)
+  _C._jit_pass_onnx_graph_shape_type_inference(
+C:\Python311\Lib\site-packages\torch\onnx\utils.py:663: UserWarning: Constant folding - unsupported opset version. Constant folding not applied. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\jit\passes\onnx\constant_fold.cpp:273.)
+  _C._jit_pass_onnx_graph_shape_type_inference(
+C:\Python311\Lib\site-packages\torch\onnx\utils.py:1186: UserWarning: Constant folding - unsupported opset version. Constant folding not applied. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\jit\passes\onnx\constant_fold.cpp:346.)
+  _C._jit_pass_onnx_graph_shape_type_inference(
+C:\Python311\Lib\site-packages\torch\onnx\utils.py:1186: UserWarning: Constant folding - unsupported opset version. Constant folding not applied. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\jit\passes\onnx\constant_fold.cpp:273.)
+  _C._jit_pass_onnx_graph_shape_type_inference(
+[i] Saved model pytorch_model.onnx

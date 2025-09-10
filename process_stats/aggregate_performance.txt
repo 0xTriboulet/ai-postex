@@ -1,0 +1,5 @@
+Tool	Average Duration	Average Max CPU (%)	Average Max Memory Usage (Working Set in MBs)	Command Used
+postex DLL Credential Finder	0:00:16	6.08	20.40	execute-dll <research-dir>\credentialFinder.dll <test-dir>\tests key .9
+postex DLL Semantic Search	0:00:42	11.67	74.78	execute-dll <research-dir>\semanticSearcher.dll .51 <test-dir>\tests key
+Snaffler	0:04:22	74.53	51.12	<snaffler-dir>\Snaffler.exe -s -i <test-dir>\tests\
+TruffleHog	0:00:04	17.34	371.13	<truffle-hog-dir>\trufflehog.exe filesystem <test-dir>\tests\

